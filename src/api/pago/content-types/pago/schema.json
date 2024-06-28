@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "pagos",
+  "info": {
+    "singularName": "pago",
+    "pluralName": "pagos",
+    "displayName": "pago"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "usuario": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::usuario.usuario"
+    },
+    "monto": {
+      "type": "float"
+    },
+    "fecha": {
+      "type": "date"
+    },
+    "concepto": {
+      "type": "blocks"
+    }
+  }
+}
