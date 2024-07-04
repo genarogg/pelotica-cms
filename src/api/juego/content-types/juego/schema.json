@@ -4,7 +4,8 @@
   "info": {
     "singularName": "juego",
     "pluralName": "juegos",
-    "displayName": "juego"
+    "displayName": "juego",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -15,6 +16,17 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::categoria.categoria"
+    },
+    "nombre": {
+      "type": "string",
+      "required": true,
+      "unique": false
+    },
+    "fecha": {
+      "type": "date"
+    },
+    "ubicacion": {
+      "type": "blocks"
     }
   }
 }

@@ -4,18 +4,14 @@
   "info": {
     "singularName": "pago",
     "pluralName": "pagos",
-    "displayName": "pago"
+    "displayName": "pago",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
   },
   "pluginOptions": {},
   "attributes": {
-    "usuario": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::usuario.usuario"
-    },
     "monto": {
       "type": "float"
     },
@@ -23,7 +19,21 @@
       "type": "date"
     },
     "concepto": {
-      "type": "blocks"
+      "type": "string",
+      "required": true
+    },
+    "cancelado": {
+      "type": "boolean",
+      "default": false
+    },
+    "categorias": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::categoria.categoria",
+      "inversedBy": "pagos"
+    },
+    "referencia": {
+      "type": "biginteger"
     }
   }
 }

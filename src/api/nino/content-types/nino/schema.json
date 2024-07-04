@@ -15,17 +15,14 @@
     "usuario": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::usuario.usuario"
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "nino"
     },
     "categoria": {
       "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::categoria.categoria"
-    },
-    "delegado": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::usuario.usuario"
+      "relation": "manyToOne",
+      "target": "api::categoria.categoria",
+      "inversedBy": "ninos"
     }
   }
 }

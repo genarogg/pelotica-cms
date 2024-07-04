@@ -742,7 +742,6 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
   options: {
     draftAndPublish: false;
-    timestamps: true;
   };
   attributes: {
     username: Attribute.String &
@@ -771,6 +770,14 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'manyToOne',
       'plugin::users-permissions.role'
     >;
+    fecha_nacimiento: Attribute.Date;
+    apellido: Attribute.String;
+    telefono: Attribute.Integer;
+    nino: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToOne',
+      'api::nino.nino'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -788,35 +795,90 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
-export interface ApiCalendarioCalendario extends Schema.CollectionType {
-  collectionName: 'calendarios';
+export interface PluginCustomApiCustomApi extends Schema.CollectionType {
+  collectionName: 'custom_apis';
   info: {
-    singularName: 'calendario';
-    pluralName: 'calendarios';
-    displayName: 'calendario';
+    singularName: 'custom-api';
+    pluralName: 'custom-apis';
+    displayName: 'Custom API';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
+    comment: '';
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: true;
+    };
+    'content-type-builder': {
+      visible: true;
+    };
   };
   attributes: {
-    juego: Attribute.Relation<
-      'api::calendario.calendario',
-      'oneToOne',
-      'api::juego.juego'
-    >;
-    fecha: Attribute.DateTime;
-    ubicacion: Attribute.Blocks;
+    name: Attribute.String & Attribute.Required;
+    slug: Attribute.UID<'plugin::custom-api.custom-api', 'name'> &
+      Attribute.Required;
+    selectedContentType: Attribute.JSON;
+    structure: Attribute.JSON;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
-      'api::calendario.calendario',
+      'plugin::custom-api.custom-api',
       'oneToOne',
       'admin::user'
     > &
       Attribute.Private;
     updatedBy: Attribute.Relation<
-      'api::calendario.calendario',
+      'plugin::custom-api.custom-api',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface PluginEmailDesignerEmailTemplate
+  extends Schema.CollectionType {
+  collectionName: 'email_templates';
+  info: {
+    singularName: 'email-template';
+    pluralName: 'email-templates';
+    displayName: 'Email-template';
+    name: 'email-template';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+    increments: true;
+    comment: '';
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+  };
+  attributes: {
+    templateReferenceId: Attribute.Integer & Attribute.Unique;
+    design: Attribute.JSON;
+    name: Attribute.String;
+    subject: Attribute.String;
+    bodyHtml: Attribute.Text;
+    bodyText: Attribute.Text;
+    enabled: Attribute.Boolean & Attribute.DefaultTo<true>;
+    tags: Attribute.JSON;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'plugin::email-designer.email-template',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'plugin::email-designer.email-template',
       'oneToOne',
       'admin::user'
     > &
@@ -830,14 +892,31 @@ export interface ApiCategoriaCategoria extends Schema.CollectionType {
     singularName: 'categoria';
     pluralName: 'categorias';
     displayName: 'categoria';
+    description: '';
   };
   options: {
     draftAndPublish: true;
   };
   attributes: {
-    nombre: Attribute.String;
+    nombre: Attribute.String & Attribute.Required & Attribute.Unique;
     edad_min: Attribute.Integer;
     edad_max: Attribute.Integer;
+    pagos: Attribute.Relation<
+      'api::categoria.categoria',
+      'manyToMany',
+      'api::pago.pago'
+    >;
+    nombreDelEquipo: Attribute.String & Attribute.Required & Attribute.Unique;
+    delegado: Attribute.Relation<
+      'api::categoria.categoria',
+      'oneToOne',
+      'api::delegado.delegado'
+    >;
+    ninos: Attribute.Relation<
+      'api::categoria.categoria',
+      'oneToMany',
+      'api::nino.nino'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -856,12 +935,54 @@ export interface ApiCategoriaCategoria extends Schema.CollectionType {
   };
 }
 
+export interface ApiDelegadoDelegado extends Schema.CollectionType {
+  collectionName: 'delegados';
+  info: {
+    singularName: 'delegado';
+    pluralName: 'delegados';
+    displayName: 'delegado';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    categoria: Attribute.Relation<
+      'api::delegado.delegado',
+      'oneToOne',
+      'api::categoria.categoria'
+    >;
+    usuario: Attribute.Relation<
+      'api::delegado.delegado',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    nombreYapellido: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::delegado.delegado',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::delegado.delegado',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiJuegoJuego extends Schema.CollectionType {
   collectionName: 'juegos';
   info: {
     singularName: 'juego';
     pluralName: 'juegos';
     displayName: 'juego';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -872,6 +993,9 @@ export interface ApiJuegoJuego extends Schema.CollectionType {
       'oneToOne',
       'api::categoria.categoria'
     >;
+    nombre: Attribute.String & Attribute.Required;
+    fecha: Attribute.Date;
+    ubicacion: Attribute.Blocks;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -905,17 +1029,12 @@ export interface ApiNinoNino extends Schema.CollectionType {
     usuario: Attribute.Relation<
       'api::nino.nino',
       'oneToOne',
-      'api::usuario.usuario'
+      'plugin::users-permissions.user'
     >;
     categoria: Attribute.Relation<
       'api::nino.nino',
-      'oneToOne',
+      'manyToOne',
       'api::categoria.categoria'
-    >;
-    delegado: Attribute.Relation<
-      'api::nino.nino',
-      'oneToOne',
-      'api::usuario.usuario'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -933,62 +1052,28 @@ export interface ApiPagoPago extends Schema.CollectionType {
     singularName: 'pago';
     pluralName: 'pagos';
     displayName: 'pago';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    usuario: Attribute.Relation<
-      'api::pago.pago',
-      'oneToOne',
-      'api::usuario.usuario'
-    >;
-    monto: Attribute.Float;
-    fecha: Attribute.Date;
-    concepto: Attribute.Blocks;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<'api::pago.pago', 'oneToOne', 'admin::user'> &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<'api::pago.pago', 'oneToOne', 'admin::user'> &
-      Attribute.Private;
-  };
-}
-
-export interface ApiUsuarioUsuario extends Schema.CollectionType {
-  collectionName: 'usuarios';
-  info: {
-    singularName: 'usuario';
-    pluralName: 'usuarios';
-    displayName: 'usuario';
     description: '';
   };
   options: {
     draftAndPublish: true;
   };
   attributes: {
-    nombre: Attribute.String & Attribute.Required;
-    apellido: Attribute.String & Attribute.Required;
-    telefono: Attribute.BigInteger;
-    fecha_nacimiento: Attribute.Date;
-    tipo: Attribute.Enumeration<['NINO', 'DELEGADO']> & Attribute.Required;
-    password: Attribute.Password;
-    email: Attribute.Email;
+    monto: Attribute.Float;
+    fecha: Attribute.Date;
+    concepto: Attribute.String & Attribute.Required;
+    cancelado: Attribute.Boolean & Attribute.DefaultTo<false>;
+    categorias: Attribute.Relation<
+      'api::pago.pago',
+      'manyToMany',
+      'api::categoria.categoria'
+    >;
+    referencia: Attribute.BigInteger;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::usuario.usuario',
-      'oneToOne',
-      'admin::user'
-    > &
+    createdBy: Attribute.Relation<'api::pago.pago', 'oneToOne', 'admin::user'> &
       Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::usuario.usuario',
-      'oneToOne',
-      'admin::user'
-    > &
+    updatedBy: Attribute.Relation<'api::pago.pago', 'oneToOne', 'admin::user'> &
       Attribute.Private;
   };
 }
@@ -1011,12 +1096,13 @@ declare module '@strapi/types' {
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
-      'api::calendario.calendario': ApiCalendarioCalendario;
+      'plugin::custom-api.custom-api': PluginCustomApiCustomApi;
+      'plugin::email-designer.email-template': PluginEmailDesignerEmailTemplate;
       'api::categoria.categoria': ApiCategoriaCategoria;
+      'api::delegado.delegado': ApiDelegadoDelegado;
       'api::juego.juego': ApiJuegoJuego;
       'api::nino.nino': ApiNinoNino;
       'api::pago.pago': ApiPagoPago;
-      'api::usuario.usuario': ApiUsuarioUsuario;
     }
   }
 }

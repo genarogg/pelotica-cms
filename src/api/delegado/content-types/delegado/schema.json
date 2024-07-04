@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "delegados",
+  "info": {
+    "singularName": "delegado",
+    "pluralName": "delegados",
+    "displayName": "delegado",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "categoria": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::categoria.categoria",
+      "inversedBy": "delegado"
+    },
+    "usuario": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "nombreYapellido": {
+      "type": "string"
+    }
+  }
+}

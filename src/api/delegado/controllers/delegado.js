@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * calendario controller
+ * delegado controller
  */
 
 const { createCoreController } = require('@strapi/strapi').factories;
 
-module.exports = createCoreController('api::calendario.calendario');
+module.exports = createCoreController('api::delegado.delegado');
